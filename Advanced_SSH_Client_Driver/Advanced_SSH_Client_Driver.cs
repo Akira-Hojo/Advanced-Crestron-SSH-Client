@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using Crestron.SimplSharp;                          				
+using Crestron.SimplSharp;
+using Crestron.SimplSharp.Net;
 using Crestron.SimplSharp.Ssh;
 using Crestron.SimplSharp.Ssh.Common;
 using System.Collections.Generic;
 
-namespace SSHClient
+namespace SSHClient_Advanced
 {
     public delegate void InitializedDataHandler(ushort state);
     public delegate void ConnectionStateHandler(ushort state);
-    public delegate void ReceivedDataHandler(SimplSharpString data);    
+    public delegate void ReceivedDataHandler(SimplSharpString data);
 
     public class SSHClientDevice
     {
@@ -18,19 +19,20 @@ namespace SSHClient
 
         // ssh objects
         private SshClient client;
-        private ShellStream stream;       
+        private ShellStream stream;
 
         // connection details
         private string username, hostname, password;
-       
+        private int port;
+
         // delegates
         public InitializedDataHandler InitializedData { get; set; }
         public ReceivedDataHandler ReceivedData { get; set; }
         public ConnectionStateHandler ConnectionState { get; set; }
-        
+
         // debugging
         private string debug_name;
-        public ushort debug_enable = 0;       
+        public ushort debug_enable = 0;
 
         public void Debug(string message)
         {
@@ -38,14 +40,15 @@ namespace SSHClient
                 CrestronConsole.PrintLine("[" + debug_name + "] " + message);
         }
 
-        public void Initialize(string hostname, string username, string password, string debug_name)
+        public void Initialize(string hostname, int port, string username, string password, string debug_name)
         {
             this.hostname = hostname;
+            this.port = port;
             this.username = username;
             this.password = password;
             this.debug_name = debug_name;
 
-            Debug("Initialize() called. hostname: " + hostname + ", username: " + username + ", password: " + password);
+            Debug("Initialize() called. hostname: " + hostname + ", port: " + port + ", username: " + username + ", password: " + password);
 
             initialized = true;
             InitializedData(Convert.ToUInt16(1));
@@ -59,37 +62,37 @@ namespace SSHClient
                 Debug("Connection properties not initialized.");
                 return;
             }
-          
+
             // set up authentication method
             KeyboardInteractiveAuthenticationMethod authMethod = new KeyboardInteractiveAuthenticationMethod(username);
             authMethod.AuthenticationPrompt += new EventHandler<AuthenticationPromptEventArgs>(AuthenticationPromptHandler);
 
             // set up connection info
-            ConnectionInfo connectionInfo = new ConnectionInfo(hostname, username, authMethod);
+            //ConnectionInfo connectionInfo = new ConnectionInfo(hostname, port, username, password);
 
             // set up client
-            client = new SshClient(connectionInfo);
+            client = new SshClient(hostname, port, username, password);
             client.ErrorOccurred += new EventHandler<ExceptionEventArgs>(ClientErrorHandler);
             client.HostKeyReceived += new EventHandler<HostKeyEventArgs>(HostKeyReceivedHandler);
 
             // try to connect
-            Debug("Attempting connection to: " + hostname);
+            Debug("Attempting connection to: " + hostname + ":" + port);
             try
             {
                 client.Connect();
             }
             catch (SshConnectionException e)
             {
-                Debug ("Connection error: " + e.Message + ", Reason: " + e.DisconnectReason);
+                Debug("Connection error: " + e.Message + ", Reason: " + e.DisconnectReason);
                 Disconnect(); // free up allocated resources
                 return;
             }
-            
+
             // create shellstream
             stream = client.CreateShellStream("terminal", 80, 24, 800, 600, 1024);
             stream.DataReceived += new EventHandler<ShellDataEventArgs>(StreamDataReceivedHandler);
-            stream.ErrorOccurred += new EventHandler<ExceptionEventArgs>(StreamErrorOccurredHandler);    
-                
+            stream.ErrorOccurred += new EventHandler<ExceptionEventArgs>(StreamErrorOccurredHandler);
+
             // set connected flag
             if (client.IsConnected)
             {
@@ -126,7 +129,7 @@ namespace SSHClient
                 if (client != null && client.IsConnected)
                     client.Disconnect();
                 client.Dispose();
-            }                
+            }
             catch (Exception e)
             {
                 Debug("Disconnect() Exception occured freeing client: " + e.Message);
@@ -143,7 +146,7 @@ namespace SSHClient
             }
 
             if (stream != null && stream.CanWrite)
-                stream.WriteLine(Command);           
+                stream.WriteLine(Command);
         }
 
         //************************************* EVENT HANDLERS
@@ -153,13 +156,13 @@ namespace SSHClient
             var stream = (ShellStream)sender;
             string dataReceived = "";
             //Debug("Received Data. Length: " + stream.Length);
-            
+
             // Loop as long as there is data on the stream
             while (stream.DataAvailable)
             {
                 dataReceived = stream.Read();
             }
-            
+
             if (dataReceived != "")
             {
                 if (dataReceived.Length > 250)
@@ -179,9 +182,9 @@ namespace SSHClient
         private void StreamErrorOccurredHandler(object sender, System.EventArgs e)
         {
             Debug("SSH Shellstream error " + e.ToString());
-            Disconnect();            
+            Disconnect();
         }
-        
+
         private void AuthenticationPromptHandler(object sender, AuthenticationPromptEventArgs e)
         {
             Debug("Sending password");
@@ -191,7 +194,7 @@ namespace SSHClient
                 if (prompt.Request.IndexOf("Password:", StringComparison.InvariantCultureIgnoreCase) != -1)
                 {
                     prompt.Response = password;
-                    
+
                 }
             }
         }
