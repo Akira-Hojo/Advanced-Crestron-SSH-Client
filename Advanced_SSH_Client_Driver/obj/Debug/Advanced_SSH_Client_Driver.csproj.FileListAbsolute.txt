@@ -1,0 +1,16 @@
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\bin\Debug\Advanced_SSH_Client_Driver.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\bin\Debug\Advanced_SSH_Client_Driver.pdb
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\bin\Debug\SimplSharpCustomAttributesInterface.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\bin\Debug\SimplSharpHelperInterface.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\bin\Debug\Newtonsoft.Json.Compact.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\obj\Debug\Advanced_SSH_Client_Driver.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\Advanced_SSH_Client_Driver\obj\Debug\Advanced_SSH_Client_Driver.pdb
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\bin\Advanced_SSH_Client_Driver.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\bin\Advanced_SSH_Client_Driver.pdb
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\bin\SimplSharpCustomAttributesInterface.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\bin\SimplSharpHelperInterface.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\bin\Newtonsoft.Json.Compact.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\obj\Debug\Advanced_SSH_Client_Driver.dll
+C:\Users\furntree\Documents\GitHub\Advanced-Crestron-SSH-Client\Advanced_SSH_Client_Driver\obj\Debug\Advanced_SSH_Client_Driver.pdb
