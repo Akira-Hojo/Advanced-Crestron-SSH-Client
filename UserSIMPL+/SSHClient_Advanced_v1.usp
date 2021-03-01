@@ -1,0 +1,136 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+*******************************************************************************************/
+/*
+Dealer Name:
+               __    _               
+ /\ | o|_ _   (_  _ (_|_     _  _|  _
+/--\|<||_(_|  __)(_)| |_\/\/(_)| |<_) (c) 2021
+
+System Name: Open Source Zoom
+System Number: 0
+Programmer: Andrew Furlani
+Comments: Advanced SSH Module based on the framework of SSH-Client by Fraser McLean
+				https://github.com/frasermclean/Crestron-SSH-Client
+This module expands on the original by connecting via the alternate sshClient method in S# allowing for port numbers and passwords
+Logic has been added to allow SSH connection arguments from multiple sources 
+
+****If you need help I can be reached at: andrew@akitaaudio.com ****
+
+*/
+
+//BEGIN SYMBOL DEF*******************************************************************************
+// Here we define our symbol name to be seen in SIMPL windows.
+
+#SYMBOL_NAME "SSHClient_Advanced_v1"
+
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+#USER_SIMPLSHARP_LIBRARY "SSHClient_Advanced_Driver_v1"
+
+// module inputs
+
+digital_input _skip_;
+digital_input input_0_OrParameter_1;
+digital_input _skip_;
+
+digital_input init, connect, disconnect, debug, _skip_;
+string_input tx$[250], _skip_;
+string_input hostname_io[50], username_io[20], password_io[20], debug_name_io[10];
+analog_input _skip_, port_io, _skip_, _skip_;
+string_parameter _skip_, _skip_, _skip_, _skip_, _skip_, _skip_, _skip_, _skip_, _skip_;
+string_parameter _skip_, _skip_, _skip_, _skip_, _skip_, _skip_, _skip_, _skip_, _skip_;
+string_parameter hostname_param[50], username_param[20], password_param[20], debug_name_param[10];
+integer_parameter port_param;
+
+// module outputs      
+digital_output initialized_fb, connected_fb;
+string_output _skip_, _skip_, _skip_, rx$, _skip_;
+
+// global variables
+integer connected;
+integer method;
+SSHClientDevice client;
+
+function RegisterDelegates()
+{
+	RegisterDelegate(client, InitializedData, InitializedDataHandler);
+	RegisterDelegate(client, ConnectionState, ConnectionStateHandler);
+	RegisterDelegate(client, ReceivedData, ReceivedDataHandler);
+}
+
+callback
+function InitializedDataHandler(integer state)
+{
+	initialized_fb = state;
+}
+
+callback
+function ConnectionStateHandler(integer state)
+{
+	connected = state;
+	connected_fb = state;
+}
+
+callback
+function ReceivedDataHandler(string data)
+{
+	rx$ = data;
+}
+
+push init
+{
+	if (method = 1)
+	{
+		client.Initialize(hostname_param, port_param, username_param, password_param, debug_name_param);
+	}
+	else if (method = 0)
+	{
+		client.Initialize(hostname_io, port_io, username_io, password_io, debug_name_io);
+	}
+}
+
+push connect
+{
+	client.Connect();
+}
+
+push disconnect
+{
+	client.Disconnect();
+}
+
+push debug
+{
+	client.debug_enable = 1;
+}
+
+release debug
+{
+	client.debug_enable = 0;
+}
+
+push input_0_OrParameter_1
+{
+	method = 1;
+}
+
+release input_0_OrParameter_1
+{
+	method = 0;
+}
+
+threadsafe Change tx$
+{
+	// only send commands when connected
+	if (connected)
+		client.SendCommand(tx$);
+}
+
+function Main()
+{
+	WaitForInitializationComplete();
+	RegisterDelegates();
+}
